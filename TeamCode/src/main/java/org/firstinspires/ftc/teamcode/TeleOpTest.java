@@ -36,9 +36,9 @@ public class TeleOpTest extends LinearOpMode {
 
             double limit = Math.max((lx+ly+rx),1);
             double flpower = (ly+lx+rx)/limit;
-            double frpower = (ly-lx+rx)/limit;
-            double blpower = (ly+lx-rx)/limit;
-            double brpower = (ly-lx-rx)/limit;
+            double frpower = (ly-lx-rx)/limit;
+            double blpower = (ly-lx+rx)/limit;
+            double brpower = (ly+lx-rx)/limit;
 
 
             fl.setPower(flpower);

@@ -36,6 +36,8 @@ public class TeleOpMain extends LinearOpMode {
             return;
         }
 
+
+
         while (opModeIsActive()){
             double lx = gamepad1.left_stick_x;
             double ly = gamepad1.left_stick_y;

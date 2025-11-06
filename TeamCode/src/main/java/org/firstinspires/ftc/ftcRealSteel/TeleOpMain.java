@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="TeleOpTest")
-public class TeleOpTest extends LinearOpMode {
+@TeleOp(name="TeleOpMain")
+public class TeleOpMain extends LinearOpMode {
     //motor names, front left, front right, back left, back right motors
     DcMotor fl;
     DcMotor fr;
@@ -40,12 +40,13 @@ public class TeleOpTest extends LinearOpMode {
             double lx = gamepad1.left_stick_x;
             double ly = gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
-            if(lx==0 && ly==0 && rx==0){  // Controller 2 override
+            if(gamepad2.left_stick_x != 0 || gamepad2.left_stick_y != 0 || gamepad2.right_stick_x != 0){  // Controller 2 override
                 lx = -gamepad2.left_stick_x;
                 ly = -gamepad2.left_stick_y;
-                rx = gamepad2.right_stick_x;
+                rx = -gamepad2.right_stick_x;
             }
 
+            lx = lx * 1.1;
             // movement stuff
             double limit = Math.max((lx+ly+rx),1);
             double flpower = (ly+lx+rx)/limit;
@@ -61,21 +62,34 @@ public class TeleOpTest extends LinearOpMode {
             if (gamepad1.right_trigger > 0){
                 intakepower = -1;
             }
+            if (gamepad2.right_bumper){
+                intakepower = 1;
+            }
+            if (gamepad2.right_trigger > 0){
+                intakepower = -1;
+            }
 
             // middle intake
             double midintakepower = 0;
-            if (gamepad2.right_bumper){
-                midintakepower = 1;
-            }
-            if (gamepad2.right_trigger > 0){
+            if (gamepad1.left_bumper){
                 midintakepower = -1;
             }
-
-            double flywheelpower = 0;
+            if (gamepad1.left_trigger > 0){
+                midintakepower = 1;
+            }
             if (gamepad2.left_bumper){
-                flywheelpower = 1;
+                midintakepower = -1;
             }
             if (gamepad2.left_trigger > 0){
+                midintakepower = 1;
+            }
+
+            // flywheel
+            double flywheelpower = 0;
+            if (gamepad1.y){
+                flywheelpower = -1;
+            }
+            if (gamepad2.y){
                 flywheelpower = -1;
             }
 

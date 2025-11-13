@@ -36,6 +36,8 @@ public class AutoSkibidi extends LinearOpMode {
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
+
         waitForStart();
         if (isStopRequested()){
             return;

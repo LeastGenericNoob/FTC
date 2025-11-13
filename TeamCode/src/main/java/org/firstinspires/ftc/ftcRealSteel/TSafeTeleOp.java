@@ -55,7 +55,7 @@ public class TSafeTeleOp extends LinearOpMode {
             if(gamepad2.left_stick_x != 0 || gamepad2.left_stick_y != 0 || gamepad2.right_stick_x != 0){  // Controller 2 override
                 lx = -gamepad2.left_stick_x;
                 ly = -gamepad2.left_stick_y;
-                rx = -gamepad2.right_stick_x;
+                rx = gamepad2.right_stick_x;
             }
 
             lx = lx * 1.1;
@@ -103,9 +103,6 @@ public class TSafeTeleOp extends LinearOpMode {
 
             // flywheel
             double flywheelpower = 0;
-            if (gamepad1.y && !override){
-                flywheelpower = -1;
-            }
             if (gamepad2.y){
                 flywheelpower = -1;
             }

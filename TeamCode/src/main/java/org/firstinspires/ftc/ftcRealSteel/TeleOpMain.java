@@ -45,7 +45,7 @@ public class TeleOpMain extends LinearOpMode {
             if(gamepad2.left_stick_x != 0 || gamepad2.left_stick_y != 0 || gamepad2.right_stick_x != 0){  // Controller 2 override
                 lx = -gamepad2.left_stick_x;
                 ly = -gamepad2.left_stick_y;
-                rx = -gamepad2.right_stick_x;
+                rx = gamepad2.right_stick_x;
             }
 
             lx = lx * 1.1;

@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="TeleOpMain")
 public class TeleOpMain extends LinearOpMode {
@@ -15,6 +16,15 @@ public class TeleOpMain extends LinearOpMode {
     DcMotor intake;
     DcMotor midintake;
     DcMotor flywheel;
+
+    double fwpower = -1;
+
+    int counter = 0;
+    int heldcounter = 0;
+    int prevFwPos = 0;
+
+
+    private ElapsedTime runtime = new ElapsedTime();
 
 
 
@@ -60,6 +70,7 @@ public class TeleOpMain extends LinearOpMode {
             double intakepower = 0;
             if (gamepad1.right_bumper){
                 intakepower = 1;
+                intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
             if (gamepad1.right_trigger > 0){
                 intakepower = -1;
@@ -74,30 +85,97 @@ public class TeleOpMain extends LinearOpMode {
             // middle intake
             double midintakepower = 0;
             if (gamepad1.left_bumper){
-                midintakepower = -1;
+                midintakepower = -0.7;
             }
             if (gamepad1.left_trigger > 0){
-                midintakepower = 1;
+                midintakepower = 0.7;
             }
             if (gamepad2.left_bumper){
-                midintakepower = -1;
+                midintakepower = -0.7;
             }
             if (gamepad2.left_trigger > 0){
-                midintakepower = 1;
+                midintakepower = 0.7;
             }
 
+
+            counter -= 1;
+
+
+
             // flywheel
+            boolean beingused = false;
+
             double flywheelpower = 0;
-            if (gamepad1.y){
-                flywheelpower = -1;
+
+            if (gamepad1.y || gamepad2.y){
+                if (heldcounter == 0) {
+                    runtime.reset();
+                    heldcounter = 1;
+                }
+                if (runtime.milliseconds() < 1000) {
+                    flywheelpower = -1;
+                } else {
+                    flywheelpower = -0.8;
+                }
+                beingused = true;
+            } else {
+                heldcounter = 0;
             }
-            if (gamepad2.y){
-                flywheelpower = -1;
+
+
+            if ((gamepad1.a || gamepad2.a) && !beingused){
+                if (heldcounter == 0) {
+                    runtime.reset();
+                    heldcounter = 1;
+                }
+                if (runtime.milliseconds() < 2000) {
+                    flywheelpower = -1;
+                } else {
+                    flywheelpower = -0.56;
+                }
+                beingused = true;
+            } else {
+                heldcounter = 0;
+            }
+
+            if ((gamepad1.x || gamepad2.x) && !beingused){
+                if (heldcounter == 0) {
+                    runtime.reset();
+                    heldcounter = 1;
+                }
+                if (runtime.milliseconds() < 2000) {
+                    flywheelpower = -1;
+                } else {
+                    flywheelpower = fwpower;
+                }
+            } else {
+                heldcounter = 0;
+            }
+
+
+
+            if (gamepad1.dpad_up || gamepad2.dpad_up){
+                if (counter <= 0){
+                    fwpower -= 0.01;
+                    counter = 30;
+                }
+            }
+            if (gamepad1.dpad_down || gamepad2.dpad_down){
+                if (counter <= 0){
+                    fwpower += 0.01;
+                    counter = 30;
+                }
             }
 
             telemetry.addData("Alex's Skill in Clash:", "Error: Variable does not exist.");
+            telemetry.addData("Flywheel set powa:", fwpower);
+            telemetry.addData("Flywheel actual powa:", flywheelpower);
+            telemetry.addData("Flywheel speed:", prevFwPos-flywheel.getCurrentPosition());
+            telemetry.addData("runtime:", runtime.milliseconds());
+            telemetry.addData("count:", counter);
             telemetry.update();
 
+            prevFwPos = flywheel.getCurrentPosition();
 
             fl.setPower(flpower);
             fr.setPower(frpower);

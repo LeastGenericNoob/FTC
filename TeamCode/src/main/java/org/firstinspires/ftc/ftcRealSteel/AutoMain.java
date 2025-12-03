@@ -17,6 +17,8 @@ import java.util.List;
 @Autonomous(name = "AutoMain")
 public class AutoMain extends LinearOpMode {
 
+    int team = 0; // 0 for blue 1 for red
+
     DcMotor fl;
     DcMotor fr;
     DcMotor bl;
@@ -34,6 +36,7 @@ public class AutoMain extends LinearOpMode {
 
     int step = 0;
     boolean done = false;
+    int seed = -1;
 
     @Override
     public void runOpMode() {
@@ -53,15 +56,31 @@ public class AutoMain extends LinearOpMode {
         encoderInit(bl);
         encoderInit(br);
 
-        double start = System.nanoTime();
         initAprilTag();
-        double end = System.nanoTime();
 
-        double proctime = (end - start) / 1_000_000;
+        while (!isStarted()) {
+            if (gamepad1.a || gamepad2.a) {
+                team = 0;
+            }
+            if (gamepad1.b || gamepad2.b) {
+                team = 1;
+            }
+            telemetry.addData("team:", team);
+            telemetry.update();
+
+        }
 
         waitForStart();
         boolean once = false;
         while (opModeIsActive()) {
+
+            seed = identifyObelisk();
+
+
+            telemetryAprilTag();
+
+            telemetry.addData("Seed:", seed);
+            telemetry.update();
 
             //Pseudocode for Blue
             //Strafe 2 blocks right
@@ -80,29 +99,38 @@ public class AutoMain extends LinearOpMode {
             if (step == 0){
                 driveForward(2);
                 waitUntilDone();
+                sleep(1000);
             }
             if (step == 1) {
-                rotate(2);
+                rotate(1.5);
                 waitUntilDone();
+                sleep(1000);
             }
             if (step == 2) {
                 strafe(2);
                 waitUntilDone();
+                sleep(1000);
             }
 
             if (step == 3) {
-                telemetry.addData("Step Status", "Done");
+                telemetry.addData("We Are", "Done");
             }
+
 
 
             //telemetryAprilTag();
             // Push telemetry to the Driver Station.
-            telemetry.addData("AprilTag Init time:", proctime);
+
+            telemetry.addData("Step Number:", step);
+            telemetry.addData("Seed:", seed);
+            telemetry.addData("team", team);
             telemetry.update();
 
         }
         visionPortal.close();
     }
+
+
 
     private void waitUntilDone() {
         while (!(fr.getCurrentPosition() == fr.getTargetPosition())){
@@ -159,6 +187,48 @@ public class AutoMain extends LinearOpMode {
 
 
     // APRIL TAG STUFF
+
+    private void autoAim() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                if (detection.id == 20) {
+                    if (detection.ftcPose.x < 0) {
+                        strafe(0.1);
+                    } else {
+                        strafe(-0.1);
+                    }
+                }
+                if (detection.id == 24) {
+                    if (detection.ftcPose.x < 0) {
+                        strafe(0.1);
+                    } else {
+                        strafe(-0.1);
+                    }
+                }
+            }
+        }
+    }
+
+    private int identifyObelisk() {
+        int OSeed = -1;
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+
+            if (detection.metadata != null) {
+                if (detection.id == 21) {
+                    OSeed = 1;
+                }
+                if (detection.id == 22) {
+                    OSeed = 2;
+                }
+                if (detection.id == 23) {
+                    OSeed = 3;
+                }
+            }
+        }
+        return OSeed;
+    }
 
     private void getPos() {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();

@@ -102,7 +102,7 @@ public class AutoMain extends LinearOpMode {
                 sleep(1000);
             }
             if (step == 1) {
-                rotate(1.5);
+                rotate(1.6);
                 waitUntilDone();
                 sleep(1000);
             }

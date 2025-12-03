@@ -103,53 +103,39 @@ public class TeleOpMain extends LinearOpMode {
 
 
             // flywheel
-            boolean beingused = false;
+            boolean yPressed = gamepad1.y || gamepad2.y;
+            boolean aPressed = gamepad1.a || gamepad2.a;
+            boolean xPressed = gamepad1.x || gamepad2.x;
 
+            boolean anyPressed = yPressed || aPressed || xPressed;
             double flywheelpower = 0;
 
-            if (gamepad1.y || gamepad2.y){
+            if (anyPressed) {
                 if (heldcounter == 0) {
                     runtime.reset();
                     heldcounter = 1;
                 }
-                if (runtime.milliseconds() < 1000) {
-                    flywheelpower = -1;
-                } else {
-                    flywheelpower = -0.8;
-                }
-                beingused = true;
-            } else {
-                heldcounter = 0;
-            }
 
+                if (yPressed) {
+                    if (runtime.milliseconds() < 1000) {
+                        flywheelpower = -1;
+                    } else {
+                        flywheelpower = -0.8;
+                    }
+                }
+                else if (aPressed) {
+                    if (runtime.milliseconds() < 2000) flywheelpower = -1;
+                    else flywheelpower = -0.56;
+                }
+                else if (xPressed) {
+                    if (runtime.milliseconds() < 2000) flywheelpower = -1;
+                    else flywheelpower = fwpower;
+                }
 
-            if ((gamepad1.a || gamepad2.a) && !beingused){
-                if (heldcounter == 0) {
-                    runtime.reset();
-                    heldcounter = 1;
-                }
-                if (runtime.milliseconds() < 2000) {
-                    flywheelpower = -1;
-                } else {
-                    flywheelpower = -0.56;
-                }
-                beingused = true;
             } else {
+                // Only reset when NO flywheel button is pressed
                 heldcounter = 0;
-            }
-
-            if ((gamepad1.x || gamepad2.x) && !beingused){
-                if (heldcounter == 0) {
-                    runtime.reset();
-                    heldcounter = 1;
-                }
-                if (runtime.milliseconds() < 2000) {
-                    flywheelpower = -1;
-                } else {
-                    flywheelpower = fwpower;
-                }
-            } else {
-                heldcounter = 0;
+                flywheelpower = 0;
             }
 
 

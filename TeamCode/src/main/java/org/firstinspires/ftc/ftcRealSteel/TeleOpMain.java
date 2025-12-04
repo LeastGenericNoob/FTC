@@ -129,7 +129,7 @@ public class TeleOpMain extends LinearOpMode {
                 }
                 else if (aPressed) {
                     if (runtime.milliseconds() < 2000) flywheelpower = -1;
-                    else flywheelpower = -0.56;
+                    else flywheelpower = -0.69;
                 }
                 else if (xPressed) {
                     if (runtime.milliseconds() < 2000) flywheelpower = -1;

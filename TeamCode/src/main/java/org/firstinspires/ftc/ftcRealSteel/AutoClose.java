@@ -11,11 +11,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@Autonomous(name = "AutoMain")
-public class AutoMain extends LinearOpMode {
+@Autonomous(name = "AutoClose")
+public class AutoClose extends LinearOpMode {
 
     int team = 0; // 0 for blue 1 for red
 
@@ -37,6 +38,8 @@ public class AutoMain extends LinearOpMode {
     int step = 0;
     boolean done = false;
     int seed = -1;
+
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -76,38 +79,42 @@ public class AutoMain extends LinearOpMode {
 
             seed = identifyObelisk();
 
-
             telemetryAprilTag();
 
             telemetry.addData("Seed:", seed);
             telemetry.update();
 
-            //Pseudocode for Blue
-            //Strafe 2 blocks right
-            //move 1 block back
-            //analyze obelisk
-            //MAYBE rotate balls to pattern
-            //aim via apriltags and shoot
-            //based on obelisk do movement patterns
-
-            //eg PPG
-            //rotate to right
-            //move back and intake balls
-            //move front
-            //aim via apriltags and shoot
+            // -----------------COMMANDS YOU GOTTA KNOW ------------------
+            // driveForward(Value)    when value = 2.06 it drives a full mat forward
+            // WaitUntilDone()  not a very good function, only detects if the frontleft motor has finished its job.
+            // proceeds to the next step. if used when not running drive train (e.g intake/outake commands) will just move to next step
+            // Use runtime.milliseconds to check how long its been since the last waitUntilDone, use it for intake/outake time control
+            // rotate(Value)  when value = 1.6 roughly 90 degrees clockwise
+            // strafe(Value)  dont use, too inconsistent
 
             if (step == 0){
-                driveForward(2);
+                driveForward(-7);
                 waitUntilDone();
                 sleep(1000);
             }
             if (step == 1) {
-                rotate(1.6);
-                waitUntilDone();
-                sleep(1000);
+                flywheel.setPower(1);
+                intake.setPower(0.1);
+                if (runtime.milliseconds() > 2000)
+                    flywheel.setPower(0.7);
+                for (int i = 0; i < 5; i++) {
+                    if (runtime.milliseconds() > 5000+i*2000) {
+                        intake.setPower(1);
+                        midintake.setPower(1);
+                    }
+                    if (runtime.milliseconds() > 6000+i*2000) {
+                        midintake.setPower(0);
+                        waitUntilDone();
+                    }
+                }
             }
             if (step == 2) {
-                strafe(2);
+                driveForward(7);
                 waitUntilDone();
                 sleep(1000);
             }
@@ -138,6 +145,7 @@ public class AutoMain extends LinearOpMode {
             telemetry.addData("waiting", "kalsdf");
             telemetry.update();
         }
+        runtime.reset();
         step+=1;
         done=false;
     }
@@ -194,16 +202,16 @@ public class AutoMain extends LinearOpMode {
             if (detection.metadata != null) {
                 if (detection.id == 20) {
                     if (detection.ftcPose.x < 0) {
-                        strafe(0.1);
+                        rotate(0.02);
                     } else {
-                        strafe(-0.1);
+                        rotate(-0.02);
                     }
                 }
                 if (detection.id == 24) {
                     if (detection.ftcPose.x < 0) {
-                        strafe(0.1);
+                        rotate(0.1);
                     } else {
-                        strafe(-0.1);
+                        rotate(-0.1);
                     }
                 }
             }

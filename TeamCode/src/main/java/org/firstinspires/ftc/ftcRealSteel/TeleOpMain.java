@@ -59,21 +59,16 @@ public class TeleOpMain extends LinearOpMode {
                 rx = gamepad2.right_stick_x;
             }
 
-            if (gamepad1.dpad_left){
-                lx = 1;
-            }
-            if (gamepad2.dpad_right){
-                lx = -1;
-            }
+
 
 
             lx = lx * 1.1;
             // movement stuff
             double limit = Math.max((lx+ly+rx),1);
-            double flpower = (ly+lx+rx)/limit;
-            double frpower = (ly-lx-rx)/limit;
-            double blpower = (ly-lx+rx)/limit*sfix;
-            double brpower = (ly+lx-rx)/limit*sfix;
+            double flpower = (ly+lx+rx)/(limit*sfix);
+            double frpower = (ly-lx-rx)/(limit*sfix);
+            double blpower = (ly-lx+rx)/limit;
+            double brpower = (ly+lx-rx)/limit;
 
             // intake #1
             double intakepower = 0;
@@ -162,18 +157,7 @@ public class TeleOpMain extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.dpad_left){
-                if (counter <= 0){
-                    sfix -= 0.01;
-                    counter = 30;
-                }
-            }
-            if (gamepad2.dpad_right){
-                if (counter <= 0){
-                    sfix += 0.01;
-                    counter = 30;
-                }
-            }
+
 
 
 

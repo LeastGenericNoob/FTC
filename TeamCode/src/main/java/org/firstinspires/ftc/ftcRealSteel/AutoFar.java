@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@Autonomous(name = "AutoClose")
-public class AutoClose extends LinearOpMode {
+@Autonomous(name = "AutoFar")
+public class AutoFar extends LinearOpMode {
 
     int team = 0; // 0 for blue 1 for red
 
@@ -39,12 +39,7 @@ public class AutoClose extends LinearOpMode {
     boolean done = false;
     int seed = -1;
 
-
-    double fwpower = 0;
-
-    double shotpower = -0.64;
-    double intakepower = 0;
-    double midintakepower = 0;
+    double shotpower = -0.80;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -85,15 +80,14 @@ public class AutoClose extends LinearOpMode {
                 sleep(100);
             }
 
-            telemetry.addData("team:", team);
             telemetry.addData("power:", shotpower);
+            telemetry.addData("team:", team);
             telemetry.update();
 
         }
 
+        runtime.reset();
 
-
-        waitForStart();
         boolean once = false;
         while (opModeIsActive()) {
 
@@ -112,74 +106,76 @@ public class AutoClose extends LinearOpMode {
             // rotate(Value)  when value = 1.6 roughly 90 degrees clockwise
             // strafe(Value)  dont use, too inconsistent
 
-            fwpower = 0;
-            intakepower = 0;
-            midintakepower = 0;
+            double fwpower = 0;
+            double intakepower = 0;
+            double midintakepower = 0;
 
             if (step == 0){
-                driveForward(-4,0.5);
-                waitUntilDone();
-                sleep(1000);
-            }
-            if (step == 1) {
                 fwpower = (-1);
                 intakepower = (0.1);
-
                 if (runtime.milliseconds() > 2000)
                     fwpower = (shotpower);
-
-                for (int i = 0; i < 4; i++) {
-                    if (runtime.milliseconds() > 5000 + i*1800){
+                if (runtime.milliseconds() > 5000) {
+                    intakepower = (1);
+                    midintakepower =  (-1);
+                }
+                if (runtime.milliseconds() > 5500) {
+                    intakepower = (0.1);
+                    midintakepower =  (0);
+                }
+                for (int i = 0; i < 3; i++) {
+                    if (runtime.milliseconds() > 6000 + i*1800){
                         intakepower = (1);
                         midintakepower =  (-1);
                     }
-                    if (runtime.milliseconds() > 5800 + i*1800) {
+                    if (runtime.milliseconds() > 6500 + i*1800) {
                         intakepower = (0.1);
                         midintakepower =  (0);
                     }
                 }
 
-                if (runtime.milliseconds() > 9000) {
+                if (runtime.milliseconds() > 10000) {
                     intakepower = (0);
-                    midintakepower =  (0);
-                    fwpower = 0;
-                    waitUntilDone();
+                    midintakepower = (0);
+                    fwpower = (0);
+                    step+=1;
                 }
-
                 flywheel.setPower(fwpower);
                 midintake.setPower(midintakepower);
                 intake.setPower(intakepower);
             }
-            if (step == 2) {
-                intakepower = 0;
-                midintakepower = 0;
-                fwpower = 0;
+            if (step == 1) {
+                intakepower = (0);
+                fwpower = (0);
+                midintakepower = (0);
+
                 if (team == 0) {
-                    rotate(1);
+                    rotate(0.8);
                 }
                 if (team == 1) {
-                    rotate(-1);
+                    rotate(-0.8);
                 }
-                step+=1;
+                waitUntilDone();
+            }
+            if (step == 2) {
+                driveForward(2.06,0.5);
+                waitUntilDone();
                 sleep(1000);
-
 
             }
 
             if (step == 3) {
-                driveForward(3.7,0.5);
+                rotate(3.2);
                 waitUntilDone();
-            }
-            if (step == 4) {
                 telemetry.addData("We Are", "Done");
             }
 
-            if (step != 1) {
+
+            if (step != 0) {
                 flywheel.setPower(0);
                 midintake.setPower(0);
                 intake.setPower(0);
             }
-
 
             //telemetryAprilTag();
             // Push telemetry to the Driver Station.
@@ -187,15 +183,13 @@ public class AutoClose extends LinearOpMode {
             telemetry.addData("Step Number:", step);
             telemetry.addData("Seed:", seed);
             telemetry.addData("team", team);
-            telemetry.addData("powers", fwpower);
-            telemetry.addData("powers", midintakepower);
-            telemetry.addData("powers", intakepower);
-            telemetry.addData("time", runtime.milliseconds());
             telemetry.update();
 
         }
         visionPortal.close();
     }
+
+
 
     private void waitUntilDone() {
         while (!(fr.getCurrentPosition() == fr.getTargetPosition())){
@@ -319,7 +313,7 @@ public class AutoClose extends LinearOpMode {
 
                 .build();
 
-            VisionPortal.Builder builder = new VisionPortal.Builder();
+        VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "camera"));
 
@@ -365,5 +359,4 @@ public class AutoClose extends LinearOpMode {
         telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
 }
-
 

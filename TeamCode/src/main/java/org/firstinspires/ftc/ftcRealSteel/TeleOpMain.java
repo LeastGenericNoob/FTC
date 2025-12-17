@@ -197,7 +197,7 @@ public class TeleOpMain extends LinearOpMode {
                 measure.reset();
             }
 
-            if (gamepad2.b){
+            if (gamepad1.b || gamepad2.b){
                 autoAim();
             }
 
@@ -233,6 +233,8 @@ public class TeleOpMain extends LinearOpMode {
 
         return power;
     }
+
+
 
     private void rotate(double power) {
         fl.setPower(power);

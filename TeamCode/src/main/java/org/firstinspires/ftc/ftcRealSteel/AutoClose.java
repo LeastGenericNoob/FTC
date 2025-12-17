@@ -40,6 +40,9 @@ public class AutoClose extends LinearOpMode {
     int seed = -1;
 
 
+
+    int prevFwPos = 0;
+    double fwSpeed = 0;
     double fwpower = 0;
 
     double shotpower = -0.64;
@@ -47,6 +50,7 @@ public class AutoClose extends LinearOpMode {
     double midintakepower = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime measure = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -126,7 +130,7 @@ public class AutoClose extends LinearOpMode {
                 intakepower = (0.1);
 
                 if (runtime.milliseconds() > 2000)
-                    fwpower = (shotpower);
+                    fwpower = pid(fwSpeed, 1300,-0.0002,-0.65);
 
                 for (int i = 0; i < 4; i++) {
                     if (runtime.milliseconds() > 5000 + i*1800){
@@ -180,6 +184,12 @@ public class AutoClose extends LinearOpMode {
                 intake.setPower(0);
             }
 
+
+            if (measure.milliseconds() > 1000) {
+                fwSpeed = prevFwPos-flywheel.getCurrentPosition();
+                prevFwPos = flywheel.getCurrentPosition();
+                measure.reset();
+            }
 
             //telemetryAprilTag();
             // Push telemetry to the Driver Station.
@@ -248,6 +258,16 @@ public class AutoClose extends LinearOpMode {
 
 
 
+    //1370 short
+    //1670 long
+    private double pid(double speed, double target, double kP, double f) {
+        double power = 0;
+        double error = target - speed;
+
+        power = kP*error+f;
+
+        return power;
+    }
 
 
 

@@ -35,14 +35,15 @@ public class TeleOpMain extends LinearOpMode {
     double fwSpeed = 0;
     boolean updateFwSpeed = false;
 
+    boolean yPressed = false;
+    boolean aPressed = false;
 
-
-
+    int chosenfire = 0;
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime measure = new ElapsedTime();
 
-    //private AprilTagProcessor aprilTag;
-    //private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -57,7 +58,7 @@ public class TeleOpMain extends LinearOpMode {
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //initAprilTag();
+        initAprilTag();
 
         waitForStart();
         if (isStopRequested()){
@@ -132,17 +133,30 @@ public class TeleOpMain extends LinearOpMode {
             // flywheel
             double flywheelpower = 0;
 
-            boolean yPressed = gamepad1.y || gamepad2.y;
-            boolean aPressed = gamepad1.a || gamepad2.a;
-            boolean xPressed = gamepad1.x || gamepad2.x;
+            if (gamepad1.x || gamepad2.x) {
+                chosenfire = 0;
 
-            if (yPressed) {
-                flywheelpower = pid(fwSpeed, 1670);
-            }
-            if (aPressed) {
-                flywheelpower = pid(fwSpeed, 1370);
             }
 
+            if (gamepad1.y || gamepad2.y) {
+                chosenfire = 1;
+
+            }
+            if (gamepad1.a || gamepad2.a) {
+                chosenfire = 2;
+            }
+
+            if (chosenfire == 2) {
+                flywheelpower = pid(fwSpeed, 1370,-0.0002,-0.65);
+            }
+
+            if (chosenfire == 1) {
+                flywheelpower = pid(fwSpeed, 1700,-0.0002,-0.8);
+            }
+
+            if (chosenfire == 0) {
+                flywheelpower = pid(fwSpeed, 0,-0.0002,0);
+            }
 
 //            boolean anyPressed = yPressed || aPressed || xPressed;
 //
@@ -183,7 +197,9 @@ public class TeleOpMain extends LinearOpMode {
                 measure.reset();
             }
 
-
+            if (gamepad2.b){
+                autoAim();
+            }
 
             telemetry.addData("Alex's Skill in Clash:", "Error: Variable does not exist.");
             telemetry.addData("Flywheel set powa:", fwpower);
@@ -203,25 +219,17 @@ public class TeleOpMain extends LinearOpMode {
             midintake.setPower(midintakepower);
             flywheel.setPower(flywheelpower);
 
-            //if (gamepad2.b){
-            //    autoAim();
-            //}
+
         }
     }
 
     //1370 short
     //1670 long
-    private double pid(double speed, double target) {
+    private double pid(double speed, double target, double kP, double f) {
         double power = 0;
-        double f = -0.8;
         double error = target - speed;
-        double kP = -0.0002;
 
         power = kP*error+f;
-
-        telemetry.addData("power:", power);
-        telemetry.addData("kp",kP);
-        telemetry.update();
 
         return power;
     }
@@ -233,63 +241,58 @@ public class TeleOpMain extends LinearOpMode {
         br.setPower(-power);
     }
 
-//    private void autoAim() {
-//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-//        for (AprilTagDetection detection : currentDetections) {
-//            if (detection.metadata != null) {
-//                if (detection.id == 20) {
-//                    if (detection.ftcPose.x < -4) {
-//                        rotate(-1);
-//                    } else {
-//                        rotate(1);
-//                    }
-//                }
-//                if (detection.id == 24) {
-//                    if (detection.ftcPose.x < -4) {
-//                        rotate(-1);
-//                    } else {
-//                        rotate(1);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private void initAprilTag() {
-//        // Create the AprilTag processor.
-//        aprilTag = new AprilTagProcessor.Builder()
-//                // The following default settings are available to un-comment and edit as needed.
-//                .setDrawAxes(true)
-//                .setDrawCubeProjection(true)
-//                .setDrawTagOutline(true)
-//                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-//                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-//                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-//
-//                // == CAMERA CALIBRATION ==
-//                // If you do not manually specify calibration parameters, the SDK will attempt
-//                // to load a predefined calibration for your camera.
-//                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
-//                // ... these parameters are fx, fy, cx, cy.
-//
-//                .build();
-//
-//        VisionPortal.Builder builder = new VisionPortal.Builder();
-//
-//        builder.setCamera(hardwareMap.get(WebcamName.class, "camera"));
-//
-//        builder.setCameraResolution(new Size(640, 480));
-//
-//
-//        // Set and enable the processor.
-//        builder.addProcessor(aprilTag);
-//
-//        // Build the Vision Portal, using the above settings.
-//        visionPortal = builder.build();
-//
-//        // Disable or re-enable the aprilTag processor at any time.
-//        //visionPortal.setProcessorEnabled(aprilTag, true);
-//
-//    }   // end method initAprilTag()
-//
+    private void autoAim() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                if (detection.id == 20 || detection.id == 24) {
+                    if (detection.ftcPose.x < 0) { //power = kP*error+f;
+                        rotate(pid(detection.ftcPose.x, 0, -0.02, 0));
+                        telemetry.addData("rotate ahahahha", detection.ftcPose.x);
+                    } else {
+                        rotate(pid(detection.ftcPose.x, 0, -0.02, 0));
+                        telemetry.addData("gotate mamamamama:", detection.ftcPose.x);
+                    }
+                }
+            }
+        }
+    }
+
+    private void initAprilTag() {
+        // Create the AprilTag processor.
+        aprilTag = new AprilTagProcessor.Builder()
+                // The following default settings are available to un-comment and edit as needed.
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagOutline(true)
+                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                // ... these parameters are fx, fy, cx, cy.
+
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        builder.setCamera(hardwareMap.get(WebcamName.class, "camera"));
+
+        builder.setCameraResolution(new Size(640, 480));
+
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Disable or re-enable the aprilTag processor at any time.
+        //visionPortal.setProcessorEnabled(aprilTag, true);
+
+    }   // end method initAprilTag()
+
 }

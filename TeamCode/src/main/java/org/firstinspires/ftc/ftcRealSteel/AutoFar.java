@@ -28,7 +28,8 @@ public class AutoFar extends LinearOpMode {
     DcMotor midintake;
     DcMotor flywheel;
 
-
+    int prevFwPos = 0;
+    double fwSpeed = 0;
     double tick = 537.7;
     double newtarget;
 
@@ -42,6 +43,8 @@ public class AutoFar extends LinearOpMode {
     double shotpower = -0.80;
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    private ElapsedTime measure = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -114,7 +117,7 @@ public class AutoFar extends LinearOpMode {
                 fwpower = (-1);
                 intakepower = (0.1);
                 if (runtime.milliseconds() > 2000)
-                    fwpower = (shotpower);
+                    fwpower = pid(fwSpeed, 1700,-0.0002,-0.8);;
                 if (runtime.milliseconds() > 5000) {
                     intakepower = (1);
                     midintakepower =  (-1);
@@ -241,7 +244,14 @@ public class AutoFar extends LinearOpMode {
 
 
 
+    private double pid(double speed, double target, double kP, double f) {
+        double power = 0;
+        double error = target - speed;
 
+        power = kP*error+f;
+
+        return power;
+    }
 
 
 

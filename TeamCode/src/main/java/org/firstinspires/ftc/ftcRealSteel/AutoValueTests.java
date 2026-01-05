@@ -53,8 +53,8 @@ public class AutoValueTests extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime measure = new ElapsedTime();
 
-    int forwardtest = 0;
-    int rotatetest = 0;
+    double forwardtest = 0;
+    double rotatetest = 0;
 
     @Override
     public void runOpMode() {
@@ -111,37 +111,38 @@ public class AutoValueTests extends LinearOpMode {
             // Use runtime.milliseconds to check how long its been since the last waitUntilDone, use it for intake/outake time control
             // rotate(Value)  when value = 1.6 roughly 90 degrees clockwise
             // strafe(Value)  dont use, too inconsistent
+            // 0.52
 
             fwpower = 0;
             intakepower = 0;
             midintakepower = 0;
 
             if (gamepad1.left_stick_y != 0  && runtime.milliseconds() > 100) {
-                forwardtest+=(gamepad1.left_stick_y);
+                forwardtest+=(gamepad1.left_stick_y)/10;
                 runtime.reset();
             }
 
             if (gamepad1.left_stick_x != 0  && runtime.milliseconds() > 100) {
-                rotatetest-=(gamepad1.left_stick_x);
+                rotatetest-=(gamepad1.left_stick_x)/10;
                 runtime.reset();
             }
 
 
             if (gamepad1.a && runtime.milliseconds() > 1000) {
-                driveForward(forwardtest,0.5);
+                driveForward(forwardtest,1);
                 runtime.reset();
             }
             if (gamepad1.b && runtime.milliseconds() > 1000) {
-                driveForward(-forwardtest,0.5);
+                driveForward(-forwardtest,1);
                 runtime.reset();
             }
 
             if (gamepad1.x && runtime.milliseconds() > 1000) {
-                strafe(rotatetest);
+                rotate(rotatetest);
                 runtime.reset();
             }
             if (gamepad1.y && runtime.milliseconds() > 1000) {
-                strafe(-rotatetest);
+                rotate(-rotatetest);
                 runtime.reset();
             }
 

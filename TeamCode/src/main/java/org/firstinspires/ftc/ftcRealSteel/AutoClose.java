@@ -123,7 +123,7 @@ public class AutoClose extends LinearOpMode {
             if (step == 0){
                 driveForward(-4,0.5);
                 waitUntilDone();
-                sleep(1000);
+                sleep(100);
             }
             if (step == 1) {
                 fwpower = (-1);

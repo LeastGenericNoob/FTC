@@ -33,6 +33,8 @@ public class TeleOpMain extends LinearOpMode {
     int heldcounter = 0;
     int prevFwPos = 0;
     double fwSpeed = 0;
+
+    double fwEsum = 0;
     boolean updateFwSpeed = false;
 
     boolean yPressed = false;
@@ -135,27 +137,26 @@ public class TeleOpMain extends LinearOpMode {
 
             if (gamepad1.x || gamepad2.x) {
                 chosenfire = 0;
-
             }
-
             if (gamepad1.y || gamepad2.y) {
                 chosenfire = 1;
-
+                fwEsum = 0;
             }
             if (gamepad1.a || gamepad2.a) {
                 chosenfire = 2;
+                fwEsum = 0;
             }
 
             if (chosenfire == 2) {
-                flywheelpower = pid(fwSpeed, 1370,-0.0002,-0.65);
+                flywheelpower = pid(fwSpeed, 1370,-0.0002,-0.65,fwEsum,0);
             }
 
             if (chosenfire == 1) {
-                flywheelpower = pid(fwSpeed, 1700,-0.0002,-0.8);
+                flywheelpower = pid(fwSpeed, 1700,-0.0002,-0.8,fwEsum,0);
             }
 
             if (chosenfire == 0) {
-                flywheelpower = pid(fwSpeed, 0,-0.0002,0);
+                flywheelpower = pid(fwSpeed, 0,-0.0002,0,0,0);
             }
 
 //            boolean anyPressed = yPressed || aPressed || xPressed;
@@ -221,15 +222,28 @@ public class TeleOpMain extends LinearOpMode {
 
 
         }
+
+        if (!opModeIsActive()) {
+            fl.setPower(0);
+            fr.setPower(0);
+            bl.setPower(0);
+            br.setPower(0);
+            intake.setPower(0);
+            midintake.setPower(0);
+            flywheel.setPower(0);
+        }
+
     }
 
     //1370 short
     //1670 long
-    private double pid(double speed, double target, double kP, double f) {
+    private double pid(double speed, double target, double kP, double f, double esum, double kI) {
         double power = 0;
         double error = target - speed;
 
-        power = kP*error+f;
+
+
+        power = kP*error+esum*kI+f;
 
         return power;
     }
@@ -249,10 +263,10 @@ public class TeleOpMain extends LinearOpMode {
             if (detection.metadata != null) {
                 if (detection.id == 20 || detection.id == 24) {
                     if (detection.ftcPose.x < 0) { //power = kP*error+f;
-                        rotate(pid(detection.ftcPose.x, 0, -0.02, 0));
+                        rotate(pid(detection.ftcPose.x, 0, -0.03, 0,0,0));
                         telemetry.addData("rotate ahahahha", detection.ftcPose.x);
                     } else {
-                        rotate(pid(detection.ftcPose.x, 0, -0.02, 0));
+                        rotate(pid(detection.ftcPose.x, 0, -0.03, 0,0,0));
                         telemetry.addData("gotate mamamamama:", detection.ftcPose.x);
                     }
                 }

@@ -76,6 +76,8 @@ public class AutoValueTests extends LinearOpMode {
         encoderInit(bl);
         encoderInit(br);
 
+        encoderInit(intake);
+
         initAprilTag();
 
         while (!isStarted()) {
@@ -129,11 +131,11 @@ public class AutoValueTests extends LinearOpMode {
 
 
             if (gamepad1.a && runtime.milliseconds() > 1000) {
-                driveForward(forwardtest,1);
+                driveForward(forwardtest,0.5);
                 runtime.reset();
             }
             if (gamepad1.b && runtime.milliseconds() > 1000) {
-                driveForward(-forwardtest,1);
+                driveForward(-forwardtest,0.5);
                 runtime.reset();
             }
 
@@ -146,6 +148,9 @@ public class AutoValueTests extends LinearOpMode {
                 runtime.reset();
             }
 
+            if (gamepad1.left_bumper) {
+                intake.setTargetPosition(10);
+            }
 
             if (measure.milliseconds() > 1000) {
                 fwSpeed = prevFwPos-flywheel.getCurrentPosition();
@@ -162,6 +167,15 @@ public class AutoValueTests extends LinearOpMode {
             telemetry.update();
 
         }
+        fr.setPower(0);
+        fl.setPower(0);
+        br.setPower(0);
+        bl.setPower(0);
+        intake.setPower(0);
+        midintake.setPower(0);
+        flywheel.setPower(0);
+        flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         visionPortal.close();
     }
 
@@ -211,10 +225,6 @@ public class AutoValueTests extends LinearOpMode {
         motor.setPower(power);
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-
-
-
 
     //1370 short
     //1670 long

@@ -68,6 +68,7 @@ public class AutoFar extends LinearOpMode {
         encoderInit(bl);
         encoderInit(br);
 
+
         initAprilTag();
 
         while (!isStarted()) {
@@ -196,7 +197,7 @@ public class AutoFar extends LinearOpMode {
                 intakepower = 1;
                 if (!once) {
                     once = true;
-                    driveForward(-4,0.5);
+                    driveForward(-4,0.8);
                 }
                 if (runtime.milliseconds() > 4000){
                     step +=1;

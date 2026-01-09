@@ -128,7 +128,11 @@ public class AutoFar extends LinearOpMode {
 
             if (step == 1) {
                 if (!once) {
-                    rotate(0.5);
+                    if (team == 0) {
+                        rotate(0.5);
+                    } else {
+                        rotate(-0.5);
+                    }
                     once = true;
                 }
                 if (runtime.milliseconds() > 500){
@@ -141,11 +145,11 @@ public class AutoFar extends LinearOpMode {
             if (step == 2) {
                 fwpower = pid(fwSpeed, 1700,-0.0002,-0.8);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 5000 + 1000 * i && runtime.milliseconds() < 5450 + 1000 * i) {
+                    if (runtime.milliseconds() > 5000 + 1400 * i && runtime.milliseconds() < 5500 + 1400 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 5450 + 1000 * i && runtime.milliseconds() < 6000+1000*i) {
+                    if (runtime.milliseconds() > 5500 + 1400 * i && runtime.milliseconds() < 6400+1400*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }
@@ -160,7 +164,11 @@ public class AutoFar extends LinearOpMode {
             if (step == 3) {
                 if (!once) {
                     once = true;
-                    rotate(-0.5);
+                    if (team == 0) {
+                        rotate(-0.5);
+                    } else {
+                        rotate(0.5);
+                    }
                 }
                 if (runtime.milliseconds() > 500){
                     step +=1;
@@ -172,9 +180,9 @@ public class AutoFar extends LinearOpMode {
             if (step == 4) {
                 if (!once) {
                     once = true;
-                    driveForward(1.7, 1);
+                    driveForward(1.9, 0.5);
                 }
-                if (runtime.milliseconds() > 1000){
+                if (runtime.milliseconds() > 1500){
                     step +=1;
                     once = false;
                     runtime.reset();
@@ -184,7 +192,11 @@ public class AutoFar extends LinearOpMode {
             if (step == 5) {
                 if (!once) {
                     once = true;
-                    rotate(-2);
+                    if (team == 0) {
+                        rotate(-2);
+                    } else {
+                        rotate(2);
+                    }
                 }
                 if (runtime.milliseconds() > 1000){
                     step +=1;
@@ -197,7 +209,7 @@ public class AutoFar extends LinearOpMode {
                 intakepower = 1;
                 if (!once) {
                     once = true;
-                    driveForward(-4,0.8);
+                    driveForward(-4,0.5);
                 }
                 if (runtime.milliseconds() > 4000){
                     step +=1;
@@ -209,7 +221,7 @@ public class AutoFar extends LinearOpMode {
             if (step == 7) {
                 if (!once) {
                     once = true;
-                    driveForward(4, 0.8);
+                    driveForward(4, 0.5);
                 }
                 if (runtime.milliseconds() > 2000){
                     step +=1;
@@ -221,7 +233,11 @@ public class AutoFar extends LinearOpMode {
             if (step == 8) {
                 if (!once) {
                     once = true;
-                    rotate(2);
+                    if (team == 0) {
+                        rotate(2);
+                    } else {
+                        rotate(-2);
+                    }
                 }
                 if (runtime.milliseconds() > 1000){
                     step +=1;
@@ -233,9 +249,9 @@ public class AutoFar extends LinearOpMode {
             if (step == 9) {
                 if (!once) {
                     once = true;
-                    driveForward(-1.7, 1);
+                    driveForward(-1.9, 0.5);
                 }
-                if (runtime.milliseconds() > 500){
+                if (runtime.milliseconds() > 1500){
                     step +=1;
                     once = false;
                     runtime.reset();
@@ -245,7 +261,11 @@ public class AutoFar extends LinearOpMode {
             if (step == 10) {
                 if (!once) {
                     once = true;
-                    rotate(0.45);
+                    if (team == 0) {
+                        rotate(0.7);
+                    } else {
+                        rotate(-0.7);
+                    }
                 }
                 if (runtime.milliseconds() > 500){
                     step +=1;
@@ -257,11 +277,11 @@ public class AutoFar extends LinearOpMode {
             if (step == 11) {
                 fwpower = pid(fwSpeed, 1700,-0.0002,-0.8);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 5000 + 1000 * i && runtime.milliseconds() < 5450 + 1000 * i) {
+                    if (runtime.milliseconds() > 5000 + 1400 * i && runtime.milliseconds() < 5500 + 1400 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 5450 + 1000 * i && runtime.milliseconds() < 6000+1000*i) {
+                    if (runtime.milliseconds() > 5500 + 1400 * i && runtime.milliseconds() < 6400+1400*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }

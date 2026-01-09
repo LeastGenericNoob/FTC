@@ -116,7 +116,7 @@ public class AutoClose extends LinearOpMode {
 
             if (step == 0) {
                 if (!once) {
-                    driveForward(-4, 0.8);
+                    driveForward(-4.3, 0.8);
                     once = true;
                 }
                 if (runtime.milliseconds() > 2000){
@@ -126,26 +126,15 @@ public class AutoClose extends LinearOpMode {
                 }
             }
 
-            if (step == 1) {
-                if (!once) {
-                    rotate(0.9);
-                    once = true;
-                }
-                if (runtime.milliseconds() > 500){
-                    step +=1;
-                    once = false;
-                    runtime.reset();
-                }
-            }
 
-            if (step == 2) {
-                fwpower = pid(fwSpeed, 1360,-0.0002,-0.65);
+            if (step == 1) {
+                fwpower = pid(fwSpeed, 1300,-0.0002,-0.65);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 4000 + 1200 * i && runtime.milliseconds() < 5450 + 1000 * i) {
+                    if (runtime.milliseconds() > 3000 + 1200 * i && runtime.milliseconds() < 3500 + 1200 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 4400 + 1200 * i && runtime.milliseconds() < 6000+1000*i) {
+                    if (runtime.milliseconds() > 3500 + 1200 * i && runtime.milliseconds() < 4700+1200*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }
@@ -157,10 +146,16 @@ public class AutoClose extends LinearOpMode {
                 }
             }
 
-            if (step == 3) {
+            if (step == 2) {
+                intakepower = -1;
+                midintakepower = -1;
                 if (!once) {
                     once = true;
-                    rotate(-2.9);
+                    if (team == 0) {
+                        rotate(-2.8);
+                    } else {
+                        rotate(2.8);
+                    }
                 }
                 if (runtime.milliseconds() > 3000){
                     step +=1;
@@ -169,7 +164,7 @@ public class AutoClose extends LinearOpMode {
                 }
             }
 
-            if (step == 4) {
+            if (step == 3) {
                 intakepower = 1;
                 if (!once) {
                     once = true;
@@ -182,8 +177,8 @@ public class AutoClose extends LinearOpMode {
                 }
             }
 
-            if (step == 5) {
-                if (runtime.milliseconds() > 1000) {
+            if (step == 4) {
+                if (runtime.milliseconds() > 100) {
                     intakepower = 1;
                 }
                 if (!once) {
@@ -197,10 +192,14 @@ public class AutoClose extends LinearOpMode {
                 }
             }
 
-            if (step == 6) {
+            if (step == 5) {
                 if (!once) {
                     once = true;
-                    rotate(2.9);
+                    if (team == 0) {
+                        rotate(2.9);
+                    } else {
+                        rotate(-2.9);
+                    }
                 }
                 if (runtime.milliseconds() > 1500){
                     step +=1;
@@ -211,14 +210,14 @@ public class AutoClose extends LinearOpMode {
 
 
 
-            if (step == 7) {
-                fwpower = pid(fwSpeed, 1360,-0.0002,-0.65);
+            if (step == 6) {
+                fwpower = pid(fwSpeed, 1300,-0.0002,-0.65);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 4000 + 1200 * i && runtime.milliseconds() < 5450 + 1000 * i) {
+                    if (runtime.milliseconds() > 3000 + 1200 * i && runtime.milliseconds() < 3500 + 1200 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 4400 + 1200 * i && runtime.milliseconds() < 6000+1000*i) {
+                    if (runtime.milliseconds() > 3500 + 1200 * i && runtime.milliseconds() < 4700+1200*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }

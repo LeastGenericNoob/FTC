@@ -29,6 +29,8 @@ public class TeleOpMain extends LinearOpMode {
 
     double fwpower = -0.64;
 
+    int tick = 538;
+
     int counter = 0;
     int heldcounter = 0;
     int prevFwPos = 0;
@@ -47,6 +49,8 @@ public class TeleOpMain extends LinearOpMode {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
+    boolean intakeon = false;
+
     @Override
     public void runOpMode() throws InterruptedException{
         fl = hardwareMap.dcMotor.get("frontleft");
@@ -59,6 +63,9 @@ public class TeleOpMain extends LinearOpMode {
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         initAprilTag();
 
@@ -96,16 +103,24 @@ public class TeleOpMain extends LinearOpMode {
             double intakepower = 0;
             if (gamepad1.right_bumper){
                 intakepower = 1;
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if (gamepad1.right_trigger > 0){
                 intakepower = -1;
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if (gamepad2.right_bumper){
                 intakepower = 1;
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if (gamepad2.right_trigger > 0){
                 intakepower = -1;
+                intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
+
+            //returnToStartModulo(intake,0,tick,1);
+
+
 
             // middle intake
             double midintakepower = 0;
@@ -207,6 +222,8 @@ public class TeleOpMain extends LinearOpMode {
             telemetry.addData("Flywheel actual powa:", flywheelpower);
             telemetry.addData("pos:", flywheel.getCurrentPosition());
             telemetry.addData("Flywheel speed:", fwSpeed);
+            telemetry.addData("IntakePos:", intake.getCurrentPosition());
+            telemetry.addData("IntakeTarget:", (intake.getCurrentPosition()%58)*-1+intake.getCurrentPosition());
             telemetry.addData("measure:", measure.milliseconds());
             telemetry.addData("runtime:", runtime.milliseconds());
             telemetry.update();
@@ -233,6 +250,36 @@ public class TeleOpMain extends LinearOpMode {
             flywheel.setPower(0);
         }
 
+    }
+
+    public static void returnToStartModulo(
+            DcMotor motor,
+            int startPosition,
+            int ticksPerRevolution,
+            double power
+    ) {
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int currentPos = motor.getCurrentPosition();
+
+        // Normalize positions to [0, ticksPerRevolution)
+        int currentMod = ((currentPos % ticksPerRevolution) + ticksPerRevolution) % ticksPerRevolution;
+        int startMod   = ((startPosition % ticksPerRevolution) + ticksPerRevolution) % ticksPerRevolution;
+
+        // Forward-only distance (wraps around)
+        int forwardTicks =
+                (startMod - currentMod + ticksPerRevolution) % ticksPerRevolution;
+
+        // If already aligned, do nothing
+        if (forwardTicks < 9 && forwardTicks > -9) {
+            motor.setPower(0);
+            return;
+        }
+
+        // Command motor to move forward only
+        motor.setTargetPosition(currentPos + forwardTicks);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(Math.abs(power));
     }
 
     //1370 short

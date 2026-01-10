@@ -64,8 +64,8 @@ public class TeleOpMain extends LinearOpMode {
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        prevFwPos = flywheel.getCurrentPosition();
 
         initAprilTag();
 

@@ -63,6 +63,8 @@ public class AutoFar extends LinearOpMode {
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        prevFwPos = flywheel.getCurrentPosition();
+
         encoderInit(fl);
         encoderInit(fr);
         encoderInit(bl);
@@ -143,13 +145,13 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 2) {
-                fwpower = pid(fwSpeed, 1700,-0.0002,-0.8);
+                fwpower = pid(fwSpeed, 1720,-0.0002,-0.8);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 5000 + 1400 * i && runtime.milliseconds() < 5500 + 1400 * i) {
+                    if (runtime.milliseconds() > 4000 + 1400 * i && runtime.milliseconds() < 4500 + 1400 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 5500 + 1400 * i && runtime.milliseconds() < 6400+1400*i) {
+                    if (runtime.milliseconds() > 4500 + 1400 * i && runtime.milliseconds() < 5400+1400*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }
@@ -193,9 +195,9 @@ public class AutoFar extends LinearOpMode {
                 if (!once) {
                     once = true;
                     if (team == 0) {
-                        rotate(-2);
+                        rotate(-1.9);
                     } else {
-                        rotate(2);
+                        rotate(1.9);
                     }
                 }
                 if (runtime.milliseconds() > 1000){
@@ -249,9 +251,9 @@ public class AutoFar extends LinearOpMode {
             if (step == 9) {
                 if (!once) {
                     once = true;
-                    driveForward(-1.9, 0.5);
+                    driveForward(-2, 0.5);
                 }
-                if (runtime.milliseconds() > 1500){
+                if (runtime.milliseconds() > 2000){
                     step +=1;
                     once = false;
                     runtime.reset();
@@ -275,7 +277,7 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 11) {
-                fwpower = pid(fwSpeed, 1700,-0.0002,-0.8);
+                fwpower = pid(fwSpeed, 1720,-0.0002,-0.8);
                 for (int i = 0; i < 5; i++) {
                     if (runtime.milliseconds() > 5000 + 1400 * i && runtime.milliseconds() < 5500 + 1400 * i) {
                         intakepower = 1;

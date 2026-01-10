@@ -128,13 +128,13 @@ public class AutoClose extends LinearOpMode {
 
 
             if (step == 1) {
-                fwpower = pid(fwSpeed, 1300,-0.0002,-0.65);
+                fwpower = pid(fwSpeed, 1320,-0.0002,-0.65);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 3000 + 1200 * i && runtime.milliseconds() < 3500 + 1200 * i) {
+                    if (runtime.milliseconds() > 3600 + 1400 * i && runtime.milliseconds() < 4100 + 1400 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 3500 + 1200 * i && runtime.milliseconds() < 4700+1200*i) {
+                    if (runtime.milliseconds() > 4100 + 1400 * i && runtime.milliseconds() < 5000+1400*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }
@@ -152,9 +152,9 @@ public class AutoClose extends LinearOpMode {
                 if (!once) {
                     once = true;
                     if (team == 0) {
-                        rotate(-2.8);
+                        rotate(-2.9);
                     } else {
-                        rotate(2.8);
+                        rotate(3);
                     }
                 }
                 if (runtime.milliseconds() > 3000){
@@ -183,7 +183,7 @@ public class AutoClose extends LinearOpMode {
                 }
                 if (!once) {
                     once = true;
-                    driveForward(3.5, 0.8);
+                    driveForward(3.4, 0.8);
                 }
                 if (runtime.milliseconds() > 2000){
                     step +=1;
@@ -193,12 +193,14 @@ public class AutoClose extends LinearOpMode {
             }
 
             if (step == 5) {
+                fwpower = pid(fwSpeed, 1310,-0.0002,-0.65);
+                intakepower = 1;
                 if (!once) {
                     once = true;
                     if (team == 0) {
                         rotate(2.9);
                     } else {
-                        rotate(-2.9);
+                        rotate(-2.8);
                     }
                 }
                 if (runtime.milliseconds() > 1500){
@@ -211,13 +213,14 @@ public class AutoClose extends LinearOpMode {
 
 
             if (step == 6) {
-                fwpower = pid(fwSpeed, 1300,-0.0002,-0.65);
+                intakepower = 0.4;
+                fwpower = pid(fwSpeed, 1310,-0.0002,-0.65);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 3000 + 1200 * i && runtime.milliseconds() < 3500 + 1200 * i) {
+                    if (runtime.milliseconds() > 1800 + 1300 * i && runtime.milliseconds() < 2300 + 1300 * i) {
                         intakepower = 1;
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 3500 + 1200 * i && runtime.milliseconds() < 4700+1200*i) {
+                    if (runtime.milliseconds() > 2300 + 1300 * i && runtime.milliseconds() < 3100+1300*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }

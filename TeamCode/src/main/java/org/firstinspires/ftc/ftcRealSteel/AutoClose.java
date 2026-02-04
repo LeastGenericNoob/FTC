@@ -147,8 +147,11 @@ public class AutoClose extends LinearOpMode {
             }
 
             if (step == 2) {
-                intakepower = -1;
-                midintakepower = -1;
+                if (runtime.milliseconds() > 1500) {
+                    intakepower = -1;
+                    midintakepower = -1;
+                }
+
                 if (!once) {
                     once = true;
                     if (team == 0) {

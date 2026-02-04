@@ -207,8 +207,8 @@ public class TeleOpMain extends LinearOpMode {
 
             
 
-            if (measure.milliseconds() > 1000) {
-                fwSpeed = prevFwPos-flywheel.getCurrentPosition();
+            if (measure.milliseconds() > 200) {
+                fwSpeed = (prevFwPos-flywheel.getCurrentPosition())*5;
                 prevFwPos = flywheel.getCurrentPosition();
                 measure.reset();
             }
@@ -305,19 +305,24 @@ public class TeleOpMain extends LinearOpMode {
     }
 
     private void autoAim() {
+        boolean found = false;
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 if (detection.id == 20 || detection.id == 24) {
+                    found = true;
                     if (detection.ftcPose.x < 0) { //power = kP*error+f;
                         rotate(pid(detection.ftcPose.x, 0, -0.03, 0,0,0));
-                        telemetry.addData("rotate ahahahha", detection.ftcPose.x);
+                        telemetry.addData("auto aiming...", detection.ftcPose.x);
                     } else {
                         rotate(pid(detection.ftcPose.x, 0, -0.03, 0,0,0));
-                        telemetry.addData("gotate mamamamama:", detection.ftcPose.x);
+                        telemetry.addData("auto aiming..:", detection.ftcPose.x);
                     }
                 }
             }
+        }
+        if (!found) {
+            telemetry.addData("Can't find Target","");
         }
     }
 

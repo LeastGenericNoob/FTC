@@ -40,7 +40,7 @@ public class AutoFar extends LinearOpMode {
     boolean done = false;
     int seed = -1;
 
-    double shotpower = -0.80;
+    double shotpower = 1700;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -82,11 +82,11 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                shotpower += -0.01;
+                shotpower += 1;
                 sleep(100);
             }
             if (gamepad1.dpad_down) {
-                shotpower += 0.01;
+                shotpower += -1;
                 sleep(100);
             }
 
@@ -117,6 +117,7 @@ public class AutoFar extends LinearOpMode {
             midintakepower = 0;
 
             if (step == 0) {
+                fwpower = pid(fwSpeed, shotpower,-0.0002,-0.8);
                 if (!once) {
                     driveForward(0.6, 1);
                     once = true;
@@ -129,6 +130,7 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 1) {
+                fwpower = pid(fwSpeed, shotpower,-0.0002,-0.8);
                 if (!once) {
                     if (team == 0) {
                         rotate(0.5);
@@ -145,13 +147,15 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 2) {
-                fwpower = pid(fwSpeed, 1720,-0.0002,-0.8);
+                fwpower = pid(fwSpeed, shotpower,-0.0002,-0.8);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 4000 + 1400 * i && runtime.milliseconds() < 4500 + 1400 * i) {
+                    if (runtime.milliseconds() > 3500 + 1400 * i && runtime.milliseconds() < 4000 + 1400 * i) {
                         intakepower = 1;
+                    }
+                    if (runtime.milliseconds() > 3600 + 1400 * i && runtime.milliseconds() < 4000 + 1400 * i) {
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 4500 + 1400 * i && runtime.milliseconds() < 5400+1400*i) {
+                    if (runtime.milliseconds() > 4000 + 1400 * i && runtime.milliseconds() < 4900+1400*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }
@@ -180,6 +184,8 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 4) {
+                intakepower = -1;
+                midintakepower = -1;
                 if (!once) {
                     once = true;
                     driveForward(1.9, 0.5);
@@ -211,9 +217,9 @@ public class AutoFar extends LinearOpMode {
                 intakepower = 1;
                 if (!once) {
                     once = true;
-                    driveForward(-4,0.5);
+                    driveForward(-3.8,0.5);
                 }
-                if (runtime.milliseconds() > 4000){
+                if (runtime.milliseconds() > 2200){
                     step +=1;
                     once = false;
                     runtime.reset();
@@ -221,11 +227,12 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 7) {
+                intakepower = 1;
                 if (!once) {
                     once = true;
-                    driveForward(4, 0.5);
+                    driveForward(3.4, 0.5);
                 }
-                if (runtime.milliseconds() > 2000){
+                if (runtime.milliseconds() > 2200){
                     step +=1;
                     once = false;
                     runtime.reset();
@@ -233,12 +240,13 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 8) {
+                intakepower = 1;
                 if (!once) {
                     once = true;
                     if (team == 0) {
-                        rotate(2);
+                        rotate(1.8);
                     } else {
-                        rotate(-2);
+                        rotate(-1.9);
                     }
                 }
                 if (runtime.milliseconds() > 1000){
@@ -251,9 +259,9 @@ public class AutoFar extends LinearOpMode {
             if (step == 9) {
                 if (!once) {
                     once = true;
-                    driveForward(-2, 0.5);
+                    driveForward(-2.7, 0.5);
                 }
-                if (runtime.milliseconds() > 2000){
+                if (runtime.milliseconds() > 2200){
                     step +=1;
                     once = false;
                     runtime.reset();
@@ -264,9 +272,9 @@ public class AutoFar extends LinearOpMode {
                 if (!once) {
                     once = true;
                     if (team == 0) {
-                        rotate(0.7);
+                        rotate(0.6);
                     } else {
-                        rotate(-0.7);
+                        rotate(-0.6);
                     }
                 }
                 if (runtime.milliseconds() > 500){
@@ -277,17 +285,20 @@ public class AutoFar extends LinearOpMode {
             }
 
             if (step == 11) {
-                fwpower = pid(fwSpeed, 1720,-0.0002,-0.8);
+                fwpower = pid(fwSpeed, shotpower,-0.0002,-0.8);
                 for (int i = 0; i < 5; i++) {
-                    if (runtime.milliseconds() > 5000 + 1400 * i && runtime.milliseconds() < 5500 + 1400 * i) {
+                    if (runtime.milliseconds() > 4500 + 1400 * i && runtime.milliseconds() < 5000 + 1400 * i) {
                         intakepower = 1;
+                    }
+                    if (runtime.milliseconds() > 4600 + 1400 * i && runtime.milliseconds() < 5000 + 1400 * i) {
                         midintakepower = -1;
                     }
-                    if (runtime.milliseconds() > 5500 + 1400 * i && runtime.milliseconds() < 6400+1400*i) {
+                    if (runtime.milliseconds() > 5000 + 1400 * i && runtime.milliseconds() < 5900+1400*i) {
                         intakepower = 0.1;
                         midintakepower = 0;
                     }
                 }
+
 
                 if (runtime.milliseconds() > 10000){
                     step +=1;
